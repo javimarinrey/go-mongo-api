@@ -38,7 +38,7 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 	c.JSON(http.StatusCreated, prod)
 }
 
-func (h *ProductHandler) DeleteUser(c *gin.Context) {
+func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 	id := c.Param("id")
 	if err := h.repo.Delete(id); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido o error al borrar"})

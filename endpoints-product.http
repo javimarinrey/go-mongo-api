@@ -11,5 +11,5 @@ Content-Type: application/json
   "stock": 4
 }
 
-### Delete User
-DELETE http://localhost:8080/api/users/698b61da04a35afa91160fbb
+### Delete Products
+DELETE http://localhost:8080/api/products/698bbb3ede6aa654c804c36c

@@ -51,7 +51,17 @@ curl -X POST http://localhost:8080/api/users \
 -H "Content-Type: application/json" \
 -d '{"name":"Juan Perez","email":"juan@example.com"}'
 ```
-GET /users
+GET /api/users
 ```
 curl http://localhost:8080/api/users
+```
+POST /api/products
+```
+curl -X POST http://localhost:8080/api/products \
+-H "Content-Type: application/json" \
+-d '{"name":"PC","price":1000.5,"stock":4}'
+```
+GET /api/products
+```
+curl http://localhost:8080/api/products
 ```
