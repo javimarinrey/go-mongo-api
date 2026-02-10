@@ -1,24 +1,40 @@
 package main
 
 import (
-	"go-mongo-api/internal/repositories"
+	"context"
 	"log"
-	"os"
+	"time"
 
-	"go-mongo-api/internal/db"
+	"go-mongo-api/internal/handlers"
+	"go-mongo-api/internal/repositories"
 	"go-mongo-api/internal/routes"
+
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func main() {
-	db.Connect()
-	repositories.InitRepositories()
+	// Configuración de MongoDB con Réplicas
+	uri := "mongodb://mongo1:27017,mongo2:27018,mongo3:27019/?replicaSet=rs0"
 
-	r := routes.SetupRoutes()
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
+	clientOptions := options.Client().ApplyURI(uri).
+		SetMaxPoolSize(50).
+		SetMinPoolSize(10)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	client, err := mongo.Connect(ctx, clientOptions)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	log.Println("Servidor Gin corriendo en puerto", port)
-	r.Run(":" + port)
+	// Inyección de dependencias
+	userRepo := repositories.NewUserRepository(client)
+	userHandler := handlers.NewUserHandler(userRepo)
+
+	// Iniciar Servidor
+	r := routes.SetupRouter(userHandler)
+	log.Println("Servidor Gin iniciado en puerto 8080")
+	r.Run(":8080")
 }
