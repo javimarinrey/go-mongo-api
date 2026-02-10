@@ -45,23 +45,13 @@ go run cmd/api/main.go
 ```
 
 ## Endpoints
-POST /users
+POST /api/users
 ```
-curl -X POST http://localhost:8080/users \
+curl -X POST http://localhost:8080/api/users \
 -H "Content-Type: application/json" \
 -d '{"name":"Juan Perez","email":"juan@example.com"}'
 ```
 GET /users
 ```
-curl http://localhost:8080/users
-```
-POST /products
-```
-curl -X POST http://localhost:8080/products \
--H "Content-Type: application/json" \
--d '{"name":"Laptop","price":1200.50}'
-```
-GET /products
-```
-curl http://localhost:8080/products
+curl http://localhost:8080/api/users
 ```
