@@ -55,6 +55,10 @@ GET /api/users
 ```
 curl http://localhost:8080/api/users
 ```
+DELETE /api/users
+```
+curl http://localhost:8080/api/users/698bbb8dde6aa654c804c36d
+```
 POST /api/products
 ```
 curl -X POST http://localhost:8080/api/products \
@@ -64,4 +68,8 @@ curl -X POST http://localhost:8080/api/products \
 GET /api/products
 ```
 curl http://localhost:8080/api/products
+```
+DELETE /api/products
+```
+curl http://localhost:8080/api/products/698bbb3ede6aa654c804c36c
 ```
