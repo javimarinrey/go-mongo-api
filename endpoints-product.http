@@ -1,0 +1,15 @@
+### GET Products
+GET http://localhost:8080/api/products
+
+### Create Products
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "name": "PC",
+  "price": 1023.5,
+  "stock": 4
+}
+
+### Delete User
+DELETE http://localhost:8080/api/users/698b61da04a35afa91160fbb

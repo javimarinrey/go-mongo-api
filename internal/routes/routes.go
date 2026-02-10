@@ -6,14 +6,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRouter(h *handlers.UserHandler) *gin.Engine {
+func SetupRouter(uH *handlers.UserHandler, pH *handlers.ProductHandler) *gin.Engine {
 	r := gin.Default()
 
 	api := r.Group("/api")
 	{
-		api.GET("/users", h.GetUsers)
-		api.POST("/users", h.CreateUser)
-		api.DELETE("/users/:id", h.DeleteUser)
+		// Rutas de Usuarios
+		api.GET("/users", uH.GetUsers)
+		api.POST("/users", uH.CreateUser)
+
+		// Rutas de Productos
+		api.GET("/products", pH.GetProducts)
+		api.POST("/products", pH.CreateProduct)
 	}
 
 	return r

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"os"
 	"time"
 
 	"go-mongo-api/internal/handlers"
@@ -15,9 +16,14 @@ import (
 
 func main() {
 	// Configuración de MongoDB con Réplicas
-	uri := "mongodb://mongo1:27017,mongo2:27018,mongo3:27019/?replicaSet=rs0"
+	uri := os.Getenv("MONGO_URI")
+	if uri == "" {
+		uri = "mongodb://mongo1:27017,mongo2:27017,mongo3:27017/?replicaSet=rs0"
+	}
 
 	clientOptions := options.Client().ApplyURI(uri).
+		SetConnectTimeout(20 * time.Second).
+		SetServerSelectionTimeout(15 * time.Second).
 		SetMaxPoolSize(50).
 		SetMinPoolSize(10)
 
@@ -29,12 +35,28 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Inyección de dependencias
-	userRepo := repositories.NewUserRepository(client)
-	userHandler := handlers.NewUserHandler(userRepo)
+	// Ping verifica la conexión real
+	err = client.Ping(ctx, nil)
+	if err != nil {
+		log.Fatal("❌ Error: No se pudo conectar a MongoDB: ", err)
+	}
 
-	// Iniciar Servidor
-	r := routes.SetupRouter(userHandler)
+	log.Println("✅ Conexión exitosa al Replica Set de MongoDB")
+
+	nodes := client.NumberSessionsInProgress()
+	log.Printf("Sesiones activas: %d", nodes)
+
+	// Repositorios
+	userRepo := repositories.NewUserRepository(client)
+	productRepo := repositories.NewProductRepository(client)
+
+	// Handlers
+	userHandler := handlers.NewUserHandler(userRepo)
+	productHandler := handlers.NewProductHandler(productRepo)
+
+	// Router (le pasamos ambos)
+	r := routes.SetupRouter(userHandler, productHandler)
 	log.Println("Servidor Gin iniciado en puerto 8080")
 	r.Run(":8080")
+
 }
