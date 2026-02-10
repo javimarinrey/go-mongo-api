@@ -6,6 +6,9 @@ POST http://localhost:8080/api/users
 Content-Type: application/json
 
 {
-  "name": "Javi",
-  "email": "javi@mail.com"
+  "name": "Pep",
+  "email": "pep@mail.com"
 }
+
+### Delete User
+DELETE http://localhost:8080/api/users/698b61da04a35afa91160fbb
