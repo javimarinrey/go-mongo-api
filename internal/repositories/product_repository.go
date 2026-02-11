@@ -21,11 +21,19 @@ func NewProductRepository(db *mongo.Client) *ProductRepository {
 	}
 }
 
-func (r *ProductRepository) Create(p models.Product) error {
+func (r *ProductRepository) Create(p *models.Product) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	_, err := r.collection.InsertOne(ctx, p)
-	return err
+	result, err := r.collection.InsertOne(ctx, p)
+	if err != nil {
+		return err
+	}
+	// Extraemos el ID generado y lo asignamos al modelo
+	if oid, ok := result.InsertedID.(primitive.ObjectID); ok {
+		p.ID = oid
+	}
+
+	return nil
 }
 
 func (r *ProductRepository) GetAll() ([]models.Product, error) {
@@ -45,4 +53,34 @@ func (r *ProductRepository) Delete(id string) error {
 	objID, _ := primitive.ObjectIDFromHex(id)
 	_, err := r.collection.DeleteOne(context.TODO(), bson.M{"_id": objID})
 	return err
+}
+
+func (r *ProductRepository) Update(id string, p models.Product) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err // ID mal formado
+	}
+
+	// Definimos los campos a actualizar
+	update := bson.M{
+		"$set": bson.M{
+			"name":  p.Name,
+			"price": p.Price,
+			"stock": p.Stock,
+		},
+	}
+
+	result, err := r.collection.UpdateOne(ctx, bson.M{"_id": objID}, update)
+	if err != nil {
+		return err
+	}
+
+	if result.MatchedCount == 0 {
+		return mongo.ErrNoDocuments // El ID no existe en la DB
+	}
+
+	return nil
 }

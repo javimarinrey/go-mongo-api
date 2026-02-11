@@ -6,10 +6,30 @@ POST http://localhost:8080/api/products
 Content-Type: application/json
 
 {
-  "name": "PC",
-  "price": 1023.5,
-  "stock": 4
+  "name": "Mouse",
+  "price": 23.5,
+  "stock": 20
 }
 
 ### Delete Products
 DELETE http://localhost:8080/api/products/698bbb3ede6aa654c804c36c
+
+
+###
+# curl -X PUT http://localhost:8080/api/products/ID_DE_TU_PRODUCTO
+#     -H "Content-Type: application/json"
+#     -d '{
+#           "name": "Producto Actualizado",
+#           "price": 99.99,
+#           "stock": 50
+#         }'
+PUT http://localhost:8080/api/products/698c6f52c5b79f853b147efc
+Content-Type: application/json
+
+{
+  "name": "Producto Actualizado",
+  "price": 99.99,
+  "stock": 50
+}
+
+###

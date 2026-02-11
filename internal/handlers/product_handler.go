@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type ProductHandler struct {
@@ -31,7 +32,7 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if err := h.repo.Create(prod); err != nil {
+	if err := h.repo.Create(&prod); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al crear producto"})
 		return
 	}
@@ -45,4 +46,27 @@ func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "producto eliminado"})
+}
+
+func (h *ProductHandler) UpdateProduct(c *gin.Context) {
+	id := c.Param("id")
+	var prod models.Product
+
+	// Validamos el JSON de entrada
+	if err := c.ShouldBindJSON(&prod); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Datos inválidos: " + err.Error()})
+		return
+	}
+
+	err := h.repo.Update(id, prod)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Producto no encontrado"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al actualizar"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Producto actualizado correctamente"})
 }
