@@ -69,7 +69,17 @@ GET /api/products
 ```
 curl http://localhost:8080/api/products
 ```
-DELETE /api/products
+DELETE /api/products/:id
 ```
 curl http://localhost:8080/api/products/698bbb3ede6aa654c804c36c
+```
+PUT /api/products/:id
+```
+curl -X PUT http://localhost:8080/api/products/ID_DE_TU_PRODUCTO
+-H "Content-Type: application/json"
+-d '{
+   "name": "Producto Actualizado",
+   "price": 99.99,
+   "stock": 50
+}'
 ```
