@@ -27,6 +27,7 @@ func SetupRouter(uH *handlers.UserHandler, pH *handlers.ProductHandler) *gin.Eng
 		api.POST("/products", pH.CreateProduct)
 		api.DELETE("/products/:id", pH.DeleteProduct)
 		api.PUT("/products/:id", pH.UpdateProduct)
+		api.GET("/products/size", pH.GetSize)
 	}
 
 	return r

@@ -33,3 +33,9 @@ Content-Type: application/json
 }
 
 ###
+
+
+# curl http://localhost:8080/api/products/size
+GET http://localhost:8080/api/products/size
+
+###

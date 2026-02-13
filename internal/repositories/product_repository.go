@@ -2,7 +2,9 @@ package repositories
 
 import (
 	"context"
+	"fmt"
 	"go-mongo-api/internal/models"
+	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -83,4 +85,37 @@ func (r *ProductRepository) Update(id string, p models.Product) error {
 	}
 
 	return nil
+}
+
+func (r *ProductRepository) GetSize() {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	pipeline := mongo.Pipeline{
+		{
+			{"$group", bson.D{
+				{"_id", nil},
+				{"avgSize", bson.D{{"$avg", bson.D{{"$bsonSize", "$$ROOT"}}}}},
+				{"maxSize", bson.D{{"$max", bson.D{{"$bsonSize", "$$ROOT"}}}}},
+				{"minSize", bson.D{{"$min", bson.D{{"$bsonSize", "$$ROOT"}}}}},
+			}},
+		},
+	}
+
+	cursor, err := r.collection.Aggregate(ctx, pipeline)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer cursor.Close(ctx)
+
+	var results []bson.M
+	if err := cursor.All(ctx, &results); err != nil {
+		log.Fatal(err)
+	}
+
+	for _, result := range results {
+		fmt.Println("Promedio (bytes):", result["avgSize"])
+		fmt.Println("Máximo (bytes):", result["maxSize"])
+		fmt.Println("Mínimo (bytes):", result["minSize"])
+	}
 }

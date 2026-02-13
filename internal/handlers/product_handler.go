@@ -70,3 +70,8 @@ func (h *ProductHandler) UpdateProduct(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Producto actualizado correctamente"})
 }
+
+func (h *ProductHandler) GetSize(c *gin.Context) {
+	h.repo.GetSize()
+	c.JSON(http.StatusOK, gin.H{"message": "OK"})
+}
